@@ -1,7 +1,7 @@
 # PLAN_FITUR_WANITA.md — Fitur Harian untuk Audiens Wanita
 
 > Branch `dev` — 2026-08-27
-> Status: **Ditunda** — Resep Harian dan Kalender Haid tidak masuk development saat ini. Dokumen ini menjadi arsip keputusan, bukan instruksi eksekusi.
+> Status: **Arsip keputusan — diperbarui 2026-09-03**. Resep Harian dan Kalender Haid tetap ditunda. Katalog film TMDB `/hiburan` sudah selesai MVP di luar dokumen ini; drakor/serial TV tidak dikerjakan. Dokumen ini bukan instruksi eksekusi.
 > Referensi: `AGENTS.md`, `ARCHITECTURE.md`, `PLAN_FITUR_HARIAN.md` §6 (Skor Bola), `PLAN_CUACA.md`
 > Goal: **imbangin Poin 6 Skor Bola (cowok 18-40)** dengan fitur habit harian untuk **wanita/ibu rumah tangga** — retention harian cewek, memakai API gratis sesuai ketentuan, mobile-first `max-w-[420px]`.
 > Prinsip: sama dengan `AGENTS.md` §8 — server-only fetch, `cached()` + `s-maxage=600`, `Promise.allSettled`, Svelte 5 runes, no dummy, no paid key.
@@ -21,7 +21,7 @@
 | Opsi | Fitur | API Free (live test) | Effort | Retention cewek | Catatan |
 |---|---|---|---|---|---|
 | **A** | **Resep Harian — Ide Masak Hari Ini** | `themealdb.com` ✅ `200 OK` tanpa key (key `1`) | Kecil 0.5 hari | ⭐⭐⭐⭐⭐ | Ibu cek tiap pagi/sore, habit terkuat cewek |
-| **B** | **Drakor / Film Hollywood** | **TMDB API** ✅ API key/token gratis sesuai ketentuan | Sedang 1-2 hari | ⭐⭐⭐⭐ | Drakor + film dalam satu katalog hiburan |
+| **B** | **Katalog Film TMDB** | **TMDB API** ✅ API key/token gratis sesuai ketentuan | Selesai MVP | ⭐⭐⭐⭐ | Film aktif; drakor/serial TV di luar scope |
 | **C** | **Kalender Haid + Tips Harian** | Tanpa API ✅ localStorage | Kecil 0.5 hari | ⭐⭐⭐⭐⭐ | Private, no quota, cek tiap hari |
 
 **Keputusan 2026-09-03:** Resep Harian dan Kalender Haid **ditunda**. Resep tidak cocok saat ini karena API Bahasa Indonesia tidak stabil, sedangkan TheMealDB dominan Bahasa Inggris. Kalender Haid juga tidak dikembangkan sekarang karena belum masuk prioritas eksekusi. Jangan mulai implementasi tanpa keputusan baru.
@@ -234,7 +234,7 @@ Home stack: Sholat → Briefing → Gempa banner → 🍳 Resep → 🩷 Haid �
 |---|---|---|---|---|
 | 1 | **A Resep Harian** | Ditunda | Tidak ada implementasi | API Indonesia belum stabil; TheMealDB dominan Inggris |
 | 2 | **C Haid** | Ditunda | Tidak ada implementasi | Belum masuk prioritas |
-| 3 | **B Drakor + Film via TMDB** | Planned terpisah | Belum dibuat | TMDB key/token server-only |
+| 3 | **B Film via TMDB** | Selesai MVP | `/hiburan`, `hiburan.ts` | TMDB key/token server-only; drakor/TV ditunda |
 | 4 | Integrasi `/harian` tab | Ditunda | Tidak ada implementasi | Menunggu keputusan fitur |
 
 **Total estimasi tidak berlaku.** Seluruh roadmap wanita berstatus arsip sampai ada keputusan eksekusi baru.
@@ -302,8 +302,8 @@ Checklist no-dummy (`DOC_JANGAN_GUNAKAN_DUMMY.md`):
 | Fitur | Status | File Kunci | API |
 |---|---|---|---|
 | A Resep Harian | ⏸ Ditunda | Belum dibuat | API Indonesia tidak stabil; TheMealDB dominan Inggris |
-| B Drakor/Hiburan | ⏳ Planned | `hiburan.ts`, `DrakorCard.svelte`, `routes/hiburan/` | TMDB API key/token server-only |
+| B Film/Hiburan | ✅ Film TMDB | `hiburan.ts`, `routes/hiburan/` | Katalog film selesai; drakor/TV belum dikerjakan |
 | C Kalender Haid | ⏸ Ditunda | Belum dibuat | Belum masuk prioritas |
 
-> Status diperbarui hanya setelah ada keputusan eksekusi baru. Drakor/Hiburan siap masuk development memakai TMDB; Resep Harian dan Kalender Haid tetap ditunda.
+> Status diperbarui 2026-09-03. Katalog film TMDB sudah aktif di `/hiburan`; drakor/serial TV tetap di luar scope. Resep Harian dan Kalender Haid tetap ditunda.
 

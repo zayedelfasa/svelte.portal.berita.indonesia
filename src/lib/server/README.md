@@ -11,7 +11,7 @@ dieksekusi dari `+page.server.ts`, `+server.ts`, atau file lain di dalam `server
 | `rss.ts` | `parseRss(xml, sourceId)` — fast-xml-parser, `removeNSPrefix`, ekstrak enclosure → image |
 | `aggregator.ts` | `fetchAggregator(path, id)` — JSON berita-indo-api → `Article[]`, fallback RSS bila mati |
 | `cache.ts` | Map memori: `cached(key, fn, ttl)`, `peekCache(key)`, `invalidateCache(prefix)` + `TTL` split berita 10m, crypto 2m, idx 15m, forex 10m, trending 1j, weather 10m, geo 1j, reverse 1d, Harian: gempa/bola 5m, harga 6j, hijri 12j, libur 24j |
-| `market.ts` | **Market** `fetchMarketData(): Promise<MarketData>` — CoinGecko 5 crypto + TwelveData Forex (USD/IDR, IHSG via JKSE tunda) + `exchangerate.host` fallback; `cached('market:ticker')`, `peekCache` stale 24j, no dummy |
+| `market.ts` | **Legacy Market** `fetchMarketData(): Promise<MarketData>` — hidden; jangan tambah provider. Target migrasi: TradingView client-only sesuai `docs/PLAN_MARKET_TRADINGVIEW.md` |
 | `weather.ts` | **Cuaca** `fetchWeather(lat,lon): WeatherData`, `fetchAirQuality(lat,lon): AirQualityData`, `searchCity(q): GeoCity[]`, `reverseGeocode(lat,lon): string` — Open-Meteo gratis unlimited, `cached('weather:*')` + `fetchWithTimeout(7000)` |
 | `parsers.ts` | Pure parser BMKG/ESPN/TheSportsDB/PAXG/Pangan — unit-tested tanpa fetch live; ESPN `team.logo` → `BolaMatch.homeLogo/awayLogo` |
 | `bola.ts` | **Bola** `fetchBola({week}): BolaData` — 7 liga ESPN (UA `axios/1.7.0`) + TheSportsDB 4790 fallback Liga 1, `?dates=YYYYMMDD` week Mon-Sun, dedup Map, `cached('bola:scoreboard'+':week')` TTL 5m |
@@ -24,8 +24,8 @@ dieksekusi dari `+page.server.ts`, `+server.ts`, atau file lain di dalam `server
 load berita (+page.server.ts)
   → cached('rss:detik', fn) → fetchWithTimeout → parseRss/fetchAggregator → Article[]
 
-load market (+layout.server.ts & /market)
-  → cached('market:ticker') → fetchCrypto (CoinGecko) + fetchIdxForex (TwelveData, Promise.allSettled) → fallback stale 24j → MarketData (empty jujur jika gagal)
+load market legacy (+layout.server.ts & /market), saat ini hidden
+  → cached('market:ticker') → legacy fetch; target berikutnya ganti TradingView Widgets client-only tanpa server cache
 
 load cuaca (/cuaca/+page.server.ts)
   → Promise.allSettled([fetchWeather(lat,lon), fetchAirQuality(lat,lon), reverseGeocode(lat,lon)])

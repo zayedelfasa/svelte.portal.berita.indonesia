@@ -1,7 +1,8 @@
 # Dokumentasi Fitur — Market Ticker + Bottom Navigation + Tentang Aplikasi
 
-> Branch `dev` — update 2026-08-26
-> Status: **Phase 0 Done · Phase 1 Done · Tier A A1-A4 Done · Phase 2-3 Planned** — `svelte-check 0 error`, `vite build pass`
+> Branch `dev` — update 2026-09-03
+> Status: **Market legacy hidden; migrasi TradingView planned**. Phase 0/1 legacy terdokumentasi historis; implementasi baru wajib mengikuti `docs/PLAN_MARKET_TRADINGVIEW.md`.
+> Status validasi legacy terakhir: `svelte-check 0 error`, `vite build pass`
 > Legenda: ✅ Done · ⏳ Planned · 🔄 In Progress — lihat §11 Status Tracker
 
 ## 1. Ringkasan
@@ -15,7 +16,7 @@ Tiga fitur utama ditambahkan untuk memperluas portal dari **agregator berita** m
 | **Halaman Market** | `/market` | Detail tabel Saham/Forex + Crypto Top 5 dengan harga & perubahan 24j |
 | **Halaman Tentang** | `/tentang` | Info aplikasi, 3 fitur utama, teknologi, sumber data, versi |
 
-Semua data market **gratis tanpa API key berbayar**, cache terpisah, gagal fetch tidak jatuhkan halaman. **Dilarang memakai dummy harga.** Jika sumber gagal, gunakan fallback sumber lain, stale cache, atau tampilkan pesan sopan.
+Market legacy masih terdokumentasi untuk histori, tetapi hidden dari BottomNav. Target baru: TradingView Widgets read-only, client-only, tanpa server fetch/cache/API key. **Dilarang memakai dummy harga.** Detail migrasi ada di `docs/PLAN_MARKET_TRADINGVIEW.md`.
 
 ---
 
@@ -193,8 +194,8 @@ interface MarketData {
 npm run check   # svelte-check found 0 errors and 0 warnings
 npm run build   # 191 modules, 7.47s, PWA precache 31 entries
 npm run dev     # cek manual:
-                # /         → MarketTicker muncul, BottomNav 3 tab, Berita aktif
-                # /market   → tabel IHSG/LQ45/USDIDR + BTC/ETH/SOL/BNB/USDT
+                # /         → MarketTicker legacy muncul conditional, BottomNav 4 tab, Berita aktif
+                # /market   → tabel market legacy; migrasi TradingView belum aktif
                 # /tentang  → 5 card info
                 # /baca?source=detik&... → BottomNav Berita tetap aktif
 npm run preview # cek build produksi + safe-area di mobile
@@ -228,7 +229,7 @@ npm run preview # cek build produksi + safe-area di mobile
 |------|------|--------|
 | `fetchMarketData()` CoinGecko + Yahoo, `cached('market:ticker')`, fallback dummy | `src/lib/server/market.ts` | ✅ Done |
 | `MarketTicker.svelte` marquee `bg-slate-900` 80s | `src/lib/components/MarketTicker.svelte` | ✅ Done |
-| `BottomNav.svelte` 3 tab fixed `max-w-[420px]` safe-area | `src/lib/components/BottomNav.svelte` | ✅ Done |
+| `BottomNav.svelte` 4 tab fixed `max-w-[420px]` safe-area | `src/lib/components/BottomNav.svelte` | ✅ Done |
 | `+layout.server.ts` load market global | `src/routes/+layout.server.ts` | ✅ Done |
 | `+layout.svelte` inject ticker + bottom nav | `src/routes/+layout.svelte` | ✅ Done |
 | `/market` tabel saham/crypto + `/tentang` static | `src/routes/market/`, `src/routes/tentang/` | ✅ Done |
@@ -372,9 +373,9 @@ Client: watchlist.svelte.ts, portfolio.svelte.ts, alerts.svelte.ts (localStorage
 
 | Phase | Fitur | Status | File Kunci |
 |-------|-------|--------|------------|
-| **0** | MarketTicker global | ✅ Done | `market.ts`, `MarketTicker.svelte` |
-| **0** | BottomNav 3 tab | ✅ Done | `BottomNav.svelte`, `+layout.svelte` |
-| **0** | `/market` tabel | ✅ Done | `market/+page.*` |
+| **0** | MarketTicker legacy global | ✅ Done historis / hidden | `market.ts`, `MarketTicker.svelte` |
+| **0** | BottomNav 4 tab (`Berita|Cuaca|Harian|Tentang`) | ✅ Done | `BottomNav.svelte`, `+layout.svelte` |
+| **0** | `/market` tabel legacy | ✅ Done historis / hidden | `market/+page.*` |
 | **0** | `/tentang` static | ✅ Done | `tentang/+page.svelte` |
 | **1.1** | Detail `[symbol]` + sparkline (tanpa TradingView) | ✅ Done | `market/[symbol]/+page.*` |
 | **1.2** | Gainer/Loser + Trending | ✅ Done | `market.ts` `market:trending` |

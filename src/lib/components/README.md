@@ -13,7 +13,7 @@ Komponen presentational. Data selalu masuk lewat props (dari load function), tid
 | `SkeletonSection.svelte` | — | home, /media | Placeholder animate-pulse saat `navigating` |
 | `ArticleView.svelte` | `article: Article`, `sourceName` | `/baca` | Detail: gambar aspect-video, judul, summary, Baca sumber ↗ / Bagikan / Simpan + tag market |
 | `Ticker.svelte` | `articles: Article[]` | home | Marquee 8 headline terbaru, pause on hover, reduced-motion |
-| `MarketTicker.svelte` | `data: MarketData \| null` | `+layout.svelte` conditional | **Market ticker** IHSG/LQ45/USD·IDR+BTC/... marquee 80s `bg-slate-900`, duplikasi loop seamless |
+| `MarketTicker.svelte` | `data: MarketData \| null` | legacy `+layout.svelte` conditional | **Legacy market ticker**, hidden sampai migrasi TradingView |
 | `BottomNav.svelte` | — (baca `page.url.pathname` + `localStorage cuaca:loc`) | `+layout.svelte` | **Bottom nav 4 tab** `Berita /` + `Cuaca /cuaca` + `Harian /harian` + `Tentang /tentang`; `safe-area`, active `text-red-500` |
 | `WeatherCard.svelte` | `weather, cityName, lat, lon, fetchedAt` | `/cuaca` | **Cuaca** card `Lokasi Saat Ini` standar `border-gray-100 bg-white p-4`, icon `bg-sky-50`, temp/feels/H/L/humidity/wind |
 | `AirQualityCard.svelte` | `air: AirQualityData` | `/cuaca` | **Polusi** AQI 0-300 bar warna, badge kategori, PM2.5/PM10/O3 grid `bg-gray-50` |

@@ -1,7 +1,7 @@
 # DOC: JANGAN GUNAKAN DUMMY — Kebijakan Data Market
 
 > **Prinsip:** Lebih baik kosong jujur daripada angka palsu kelihatan live.
-> Berlaku untuk `src/lib/server/market.ts` + `src/lib/server/harga.ts` + `src/lib/server/cache.ts` + `src/routes/market/*` + `MarketTicker.svelte` + `HargaCard`.
+> Berlaku untuk legacy market files + `src/lib/server/harga.ts` + `src/lib/server/cache.ts` + `src/routes/market/*` + `MarketTicker.svelte` + `HargaCard`. Market legacy hidden; target migrasi TradingView client-only sesuai `docs/PLAN_MARKET_TRADINGVIEW.md`.
 
 ## 1. Masalah Dummy Lama
 
@@ -27,12 +27,12 @@ if (items.length === 0) return [
    → ada stale → return stale (fetchedAt lama → banner sopan "Menampilkan data terakhir")
    → tidak ada stale → return { items: [], fetchedAt: now } → UI honest empty sopan
    ```
-3. **UI jujur bahasa sopan:** `+page.svelte` empty → `Data market IHSG/LQ45 sementara tidak tersedia — Sumber Yahoo Finance sedang sibuk, kami tidak menampilkan angka perkiraan.` + tombol `Muat ulang`. Stale → `Menampilkan data terakhir — diperbarui 12m lalu — Sumber sedang sibuk.` `MarketTicker` hidden kalau `items=[]`.
+3. **UI jujur bahasa sopan:** legacy `/market` empty → `Data market sementara tidak tersedia — kami tidak menampilkan angka perkiraan.` + tombol `Muat ulang`. `MarketTicker` hidden kalau `items=[]`. Setelah migrasi, TradingView widget wajib tetap read-only + fallback error-state.
 4. **Cache jujur TTL split:** `cache.ts` `TTL.crypto 2m`, `TTL.idx 15m`, `TTL.forex 10m`, `cached(key,fn,ttl)` + `peekCache()` lastGood, `cached()` try/catch fallback ke stale. Jangan delete stale saat TTL habis.
 
 ### Yang Masih Boleh
 - `LQ45 estimasi` dari `IHSG*0.135` → wajib `isEstimated:true` + badge `est` + name `LQ45 (estimasi)`.
-- CoinGecko fail → `fetchCrypto()` return `[]`, bukan dummy crypto.
+- Legacy CoinGecko fail → `fetchCrypto()` return `[]`, bukan dummy crypto. TradingView widget tidak boleh diberi angka fallback hardcode.
 
 ## 3. Implementasi Sekarang
 

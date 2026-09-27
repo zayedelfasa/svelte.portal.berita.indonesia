@@ -9,7 +9,7 @@ Konvensi: tiap folder = 1 route/halaman. File `+page.server.ts` = load data serv
 | `routes/` | `/` | `+page.server.ts` | Home: `Promise.allSettled` fetchTop(3) per media; filter `?kategori=` + `unsupported` count |
 | `routes/cuaca/` | `/cuaca` | `+page.server.ts` + `+page.svelte` | **Cuaca**: `?lat=&lon=&name=` default Jakarta -6.2088,106.8456, `Promise.allSettled` weather+air+reverse, 2 card `WeatherCard`+`AirQualityCard` + `ForecastStrip` 7 hari+24 jam, tombol atas `Lokasi Saya` (geolocation) + `Cari Kota`, persist `localStorage 'cuaca:loc'` + auto-restore, Footer hide di layout |
 | `routes/cuaca/cari/` | `/cuaca/cari?q=` | `+page.server.ts` + `+page.svelte` | **Cari Kota**: `?q=` debounce 300ms → `searchCity` 5 hasil, kartu Kota Populer, pick → `/cuaca?lat=&lon=&name=` + save `cuaca:loc` |
-| `routes/market/` | `/market` | `+page.server.ts` + `+page.svelte` | **Market (HIDDEN dari BottomNav)**: tabel Saham/Forex + Crypto Top 5, reuse `market:ticker`, badge 24h, sparkline, filter/sort |
+| `routes/market/` | `/market` | `+page.server.ts` + `+page.svelte` | **Market legacy (HIDDEN dari BottomNav)**: tabel custom reuse `market:ticker`; target migrasi TradingView Widgets read-only |
 | `routes/market/[symbol]/` | `/market/:symbol` | `+page.server.ts` + `+page.svelte` | Detail symbol + sparkline |
 | `routes/harian/` | `/harian` | `+page.server.ts` + `+page.svelte` | Tab Harian: Gempa, Harga, Kalender, Bola; Ringkasan Pagi dipindahkan ke `/` (tab Berita); detail `/harian/{briefing,gempa,harga,bola}` — bola chip liga + `?week=1` |
 | `routes/hiburan/` | `/hiburan` | `+page.server.ts` + `+page.svelte` | Katalog film TMDB: trending, populer, sedang tayang, upcoming, search, genre; detail `/hiburan/movie/:id` dengan overview, cast, trailer, film serupa |
@@ -22,8 +22,8 @@ Konvensi: tiap folder = 1 route/halaman. File `+page.server.ts` = load data serv
 
 ## Layout
 
-`+layout.svelte` — wrapper `max-w-[420px]` putih di backdrop abu; sticky `Header`; **MarketTicker** conditional hide di `/cuaca`, `/harian`, `/hiburan`, `/tentang`/`/about`; `main pb-[calc(56px+safe-area)]`; `Footer` hide di `/cuaca`, `/harian`, `/tentang`; `BottomNav` fixed 4 tab (`Berita|Cuaca|Harian|Tentang`, `cuacaHref` dinamis dari `localStorage`). Header Berita menampilkan shortcut Hiburan sekali di atas chip kategori.
-`+layout.server.ts` — load `market: MarketData | null` via `fetchMarketData()` (try/catch), header `s-maxage=600` (cuaca reuse tanpa set ulang).
+`+layout.svelte` — wrapper `max-w-[420px]` putih di backdrop abu; sticky `Header`; **MarketTicker legacy** conditional hide di `/cuaca`, `/harian`, `/hiburan`, `/tentang`/`/about`; `main pb-[calc(56px+safe-area)]`; `Footer` hide di `/cuaca`, `/harian`, `/tentang`; `BottomNav` fixed 4 tab (`Berita|Cuaca|Harian|Tentang`, `cuacaHref` dinamis dari `localStorage`). Header Berita menampilkan shortcut Hiburan sekali di atas chip kategori. Target market: `TradingViewTicker` client-only + Market tab aktif.
+`+layout.server.ts` — saat ini load legacy `market: MarketData | null`; akan dihapus saat migrasi TradingView.
 
 ## Konvensi
 

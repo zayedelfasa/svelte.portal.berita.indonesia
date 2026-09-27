@@ -1,6 +1,6 @@
 # PLAN Market — TradingView Embed (READ ONLY)
 
-> Status: PLAN baru 2026-08-27 — Yahoo Finance HAPUS total (403 kurang bagus)
+> Status: **NEXT / belum dikerjakan** — plan diperbarui 2026-09-03. Market legacy masih hidden; jangan implement provider custom baru.
 > Sumber market baru: **TradingView Widget (embed) — gratis, tanpa API key, READ ONLY**
 > BottomNav: kembali 4 tab `Berita | Cuaca | Market | Tentang` — Market aktif lagi (sebelumnya hidden)
 

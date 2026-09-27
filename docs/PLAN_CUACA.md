@@ -1,9 +1,9 @@
 # PLAN_CUACA.md — Tab Cuaca & Polusi (Tab ke-3/4)
 
 > Branch `dev` — 2026-08-27
-> Status: **Done** — Phase C1/C2 selesai, 7 issues closed, `check 0` `build pass`
+> Status: **Done** — Phase C1/C2 selesai, 7 issues closed, `check 0` `build pass`. Tidak ada task cuaca tertunda di roadmap aktif.
 > Referensi: `../AGENTS.md`, `../ARCHITECTURE.md`, `DOC_FITUR_MARKET_TENTANG.md` (§9 Roadmap)
-> BottomNav saat ini: `Berita /` · `Cuaca /cuaca` · `Tentang /tentang` (3 tab, Market hidden). Cuaca sudah jadi **tab ke-2** `Cuaca /cuaca` + `/cuaca/cari`.
+> BottomNav saat ini: `Berita /` · `Cuaca /cuaca` · `Harian /harian` · `Tentang /tentang` (4 tab, Market hidden). Cuaca sudah jadi **tab ke-2** `Cuaca /cuaca` + `/cuaca/cari`.
 
 ## 1. Ringkasan
 

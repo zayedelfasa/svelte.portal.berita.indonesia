@@ -1,5 +1,12 @@
 # Changelog Pekerjaan Project
 
+## 2026-09-03 — Sinkronisasi Dokumentasi Status
+
+- Dokumentasi root, arsitektur, README folder, market, cuaca, fitur wanita, dan kebijakan no-dummy disinkronkan dengan status kode aktual.
+- Hiburan film TMDB ditandai selesai MVP; drakor/serial TV tetap di luar scope.
+- Market TradingView ditandai sebagai task berikutnya; Market legacy tetap hidden dan tidak dikembangkan.
+- Status commit/deployment stale diperbaiki; tidak ada perubahan kode aplikasi.
+
 ## 2026-09-03 — Hiburan: Pagination, Detail, Widget Harian
 
 - Search `/hiburan?q=...` mendukung pagination `page=` + tombol `Muat halaman berikutnya`.
@@ -313,6 +320,8 @@ Status: **NEXT** — Yahoo HAPUS total (403 kurang bagus)
 
 ## Pekerjaan yang Belum Dikerjakan
 
+> Status dokumen diperbarui 2026-09-03. Fitur Hiburan TMDB sudah selesai sampai pagination, detail, dan widget Harian. Market TradingView belum diimplementasikan.
+
 ### Market — NEXT PLAN (TradingView)
 
 - EXECUTE `PLAN_MARKET_TRADINGVIEW.md` (3 component TradingView + BottomNav 4 tab + /market widget)
@@ -328,8 +337,8 @@ Status: **NEXT** — Yahoo HAPUS total (403 kurang bagus)
 ### Project Umum
 
 - Monetisasi QRIS pada slot Footer masih placeholder.
-- Belum ada commit baru setelah pekerjaan ini.
-- Belum push ke remote branch.
+- Commit Hiburan terbaru: `7eccc7d feat(hiburan): add movie pagination and daily widget`.
+- Working tree saat audit: bersih di branch `dev`; status push perlu dicek per deployment.
 
 ## 2026-08-31 — Bola 7 liga + Timeline Opsi C + Logo + Week View
 
@@ -467,7 +476,7 @@ Branch kerja: `dev` — lanjut PLAN_HARGA_TRENDS Phase 2 + Kalender per bulan
 |---|---|---|
 | Resep Harian | ⏸ Ditunda | API Indonesia tidak stabil; TheMealDB dominan Inggris |
 | Kalender Haid | ⏸ Ditunda | Belum masuk prioritas development |
-| Drakor/Hiburan | ⏳ Planned | Tidak termasuk perubahan ini |
+| Drakor/Hiburan | ✅ Film TMDB selesai / ⏸ TV-drakor ditunda | Scope aktif film saja; lihat `docs/PLAN_HIBURAN.md` |
 
 ## Catatan Verifikasi Manual
 

@@ -11,7 +11,7 @@ Semua file di sini bisa di-import via alias `$lib/...` (dikonfigurasi SvelteKit)
 | `server/` | Kode **server-side only** — [README](server/README.md) |
 | `utils/` | State global runes + helper client — [README](utils/README.md) |
 | `types.ts` | Interface inti: `Article`, `SourceDef`, `SourceAdapter`, `SourceResult`, `CategoryId` |
-| `server/market.ts` | Market: `MarketItem`, `MarketData`, `fetchMarketData()` — CoinGecko + TwelveData, gratis tanpa key, no dummy |
+| `server/market.ts` | Legacy market: `MarketItem`, `MarketData`, `fetchMarketData()` — hidden; jangan dikembangkan sebelum migrasi TradingView |
 | `server/weather.ts` | Cuaca: `WeatherData`, `AirQualityData`, `GeoCity`, `fetchWeather()`, `fetchAirQuality()`, `searchCity()`, `reverseGeocode()` — Open-Meteo gratis unlimited |
 | `weatherCode.ts` | Mapping WMO `weather_code → {label, icon}` bahasa Indonesia |
 | `time.ts` | `timeAgo(iso, now)`, `isNew(iso, now)` — pure function, aman SSR |

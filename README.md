@@ -1,6 +1,6 @@
 # Portal Berita Indonesia
 
-Agregator berita lokal Indonesia — 11 media, 3 berita teratas per media + **Cuaca & Polusi (Open-Meteo)** + **Harian (Gempa/Harga/Kalender/Bola 7 liga, no dummy)** + **Katalog Film Hiburan (TMDB)** + **Market read-only (hidden)**.
+Agregator berita lokal Indonesia — 11 media, 3 berita teratas per media + **Cuaca & Polusi (Open-Meteo)** + **Harian (Gempa/Harga/Kalender/Bola 7 liga, no dummy)** + **Katalog Film Hiburan (TMDB)** + **Market read-only (TradingView, planned)**.
 Dibangun dengan **SvelteKit 2 (Svelte 5 runes) + Tailwind CSS v4**, deploy target **Vercel**.
 
 **4 Tab Aktif:** `📰 Berita` · `🌤️ Cuaca` · `📅 Harian` (gempa, harga, kalender, bola 7 liga) · `ℹ️ Tentang`. Ringkasan Pagi tampil di tab Berita. `/hiburan` diakses dari shortcut Berita, bukan tab kelima. Market `/market` tetap ada tapi **hidden dari BottomNav**. Navigasi via **Bottom Tab** fixed `max-w-[420px]`.
@@ -22,7 +22,7 @@ Dibangun dengan **SvelteKit 2 (Svelte 5 runes) + Tailwind CSS v4**, deploy targe
 | iNews | RSS `inews.id/feed` |
 
 Aggregator berita: [berita-indo-api](https://github.com/satyawikananda/berita-indo-api).
-Market: [CoinGecko API v3](https://api.coingecko.com/api/v3/coins/markets) (crypto, tanpa key) + [TwelveData](https://api.twelvedata.com/quote) (Forex USD/IDR, tanpa key, IDX tunda) — no dummy, empty jujur. Detail: [`docs/DOC_FITUR_MARKET_TENTANG.md`](docs/DOC_FITUR_MARKET_TENTANG.md).
+Market: migrasi ke [TradingView Widgets](https://www.tradingview.com/widget/) read-only direncanakan; implementasi custom Yahoo/TwelveData ditunda, tanpa data dummy. Detail: [`docs/PLAN_MARKET_TRADINGVIEW.md`](docs/PLAN_MARKET_TRADINGVIEW.md).
 Cuaca: [Open-Meteo](https://open-meteo.com) Weather + Air Quality + Geocoding (gratis tanpa key, unlimited) + [BigDataCloud](https://www.bigdatacloud.com) reverse-geocode (gratis tanpa key) — suhu, AQI, forecast 7 hari, hourly 24 jam, nama kota dari lat/lon. Detail: [`docs/PLAN_CUACA.md`](docs/PLAN_CUACA.md).
 Harian: Briefing (reuse pool berita, Web Speech) + Gempa BMKG + Harga (Logam PAXG+KAG est + Tren 7d Google Trends full-width 5×7 skor + BBM&LPG 6) + Kalender Hijriah (Aladhan) + libur & Hari Penting per bulan (Nager.Date + kurasi statis, /harian/kalender) + Bola 7 liga (ESPN + TheSportsDB 4790 Liga 1, UA fix, week Mon-Sun, timeline + logo). Detail: [`docs/PLAN_FITUR_HARIAN.md`](docs/PLAN_FITUR_HARIAN.md) + [`docs/PLAN_HARGA_TRENDS.md`](docs/PLAN_HARGA_TRENDS.md).
 
@@ -41,11 +41,11 @@ npm run check        # svelte-check 0 error
 ## Arsitektur Singkat
 
 - Semua fetch upstream dilakukan **server-side** (`src/lib/server`) → bebas masalah CORS.
-- Cache memori TTL 10 menit per sumber + split `market:crypto 2m, idx 15m, forex 10m, weather 10m, geo 1j, reverse 1d, harga 6j, trends 6j, hijri 12j` + header `s-maxage=600` untuk CDN Vercel.
+- Cache memori TTL 10 menit per sumber + split `weather 10m, geo 1j, reverse 1d, harga 6j, trends 6j, hijri 12j` + header `s-maxage=600` untuk CDN Vercel. Market TradingView akan client-only, tanpa server cache.
 - Satu sumber gagal ≠ halaman gagal (`Promise.allSettled`, section menampilkan pesan kecil; market gagal → empty jujur, cuaca gagal → card `Tidak tersedia`, layout tidak crash).
-- `+layout.server.ts` load **MarketTicker** global conditional (`{#if data?.market && !isCuaca && !isHarian && !isTentang}`) — tampil di bawah Header hanya di `/` (hide di `/cuaca`, `/harian`, `/tentang`).
+- `+layout.server.ts` saat ini masih memuat market legacy secara conditional; migrasi ke `TradingViewTicker` akan menghapus server load tersebut.
 - BottomNav fixed 4 tab (`/`, `/cuaca`, `/harian`, `/tentang`) — `safe-area-inset-bottom` aware, `cuacaHref` dinamis via `localStorage 'cuaca:loc'` → persist lokasi terakhir, Footer `Berita dikumpulkan` hide di `/cuaca`, `/harian` & `/tentang`.
-- Halaman `/cuaca` → `?lat=&lon=&name=` default Jakarta, geolocation + search kota `/cuaca/cari`; `/market` hidden; `/baca?source=X&id=Y&u=...` detail; `/tentang` static — lihat [`src/routes/README.md`](src/routes/README.md).
+- Halaman `/cuaca` → `?lat=&lon=&name=` default Jakarta, geolocation + search kota `/cuaca/cari`; `/market` masih hidden sampai migrasi TradingView; `/baca?source=X&id=Y&u=...` detail; `/tentang` static — lihat [`src/routes/README.md`](src/routes/README.md).
 
 Detail lengkap: lihat [`docs/PLAN.md`](docs/PLAN.md). Docs lain: [`docs/PLAN_CUACA.md`](docs/PLAN_CUACA.md) (Cuaca+Polusi, Done C1/C2) · [`docs/PLAN_FITUR_HARIAN.md`](docs/PLAN_FITUR_HARIAN.md) (daily habit) · [`docs/CHANGELOG.md`](docs/CHANGELOG.md).
 

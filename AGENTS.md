@@ -10,7 +10,7 @@ Portal **agregator berita + market + cuaca** lokal Indonesia. Mobile-first `max-
 - **Fitur Harian — PRIORITAS #1**: Daily Briefing, Gempa BMKG, Harga Harian (Logam PAXG+KAG + Tren Sembako 7d + BBM&LPG), Kalender Hijriah + Hari Penting Per Bulan, Skor Bola (7 liga: Liga 1 + EPL/LaLiga/SerieA/Bundesliga/Ligue1/UCL). Sholat dihapus 2026-08-29. Ikuti `docs/PLAN_FITUR_HARIAN.md` + `docs/PLAN_HARGA_TRENDS.md`.
 - **Hiburan — MVP SELESAI**: Katalog film `/hiburan` via **TMDB API** aktif; trending, populer, sedang tayang, upcoming, search, genre, detail, overview, cast, trailer, film serupa. Drakor/serial TV diabaikan. Plan: `docs/PLAN_HIBURAN.md`.
 - **Cuaca — DONE**: Suhu + forecast 7 hari + per jam + polusi AQI/PM2.5 via **Open-Meteo** gratis tanpa key.
-- **Market — PRIORITAS #3**: Fokus TradingView widget/embed read-only. Jangan kembangkan provider custom Yahoo/TwelveData/IDX atau data market dummy. Ikuti `docs/PLAN_MARKET_TRADINGVIEW.md`.
+- **Market — PRIORITAS #3**: Migrasi TradingView widget/embed read-only belum dikerjakan. Jangan kembangkan provider custom Yahoo/TwelveData/IDX atau data market dummy. Ikuti `docs/PLAN_MARKET_TRADINGVIEW.md`.
 - **4 tab aktif** via BottomNav: `Berita /` · `Cuaca /cuaca` · `Harian /harian` (gempa+harga+kalender+bola) · `Tentang /tentang`. Ringkasan Pagi tampil di tab Berita; Hiburan diakses via shortcut `/hiburan`.
 
 **Goal bisnis:** Satu tempat baca headline 11 media + pantau cuaca/polusi harian + market (saat provider ready). Bukan full trading app, bukan scrape isi penuh — klik judul → situs asli. **Bukan rekomendasi investasi.**
@@ -104,7 +104,7 @@ git push vercel dev:main
 │   │   │   ├── http.ts               # fetchWithTimeout(7000-8000ms), stripHtml(), firstImgSrc()
 │   │   │   ├── rss.ts                # parseRss()
 │   │   │   ├── aggregator.ts         # fetchAggregator()
-│   │   │   ├── market.ts             # fetchMarketData() → MarketData (CoinGecko+Yahoo) — TUNDA no dummy
+│   │   │   ├── market.ts             # legacy fetchMarketData() — hidden; jangan dikembangkan, target TradingView client-only
 │   │   │   ├── weather.ts            # fetchWeather/fetchAirQuality/searchCity/reverseGeocode → Open-Meteo (AKTIF C1/C2)
 │   │   │   ├── harga.ts              # fetchHarga() → HargaData logam (PAXG+KAG per gram est) + BBM&LPG 6 item — pangan.go.id hapus 2026-09-01
 │   │   │   ├── trends.ts             # fetchTrendsSembako() → TrendsSembakoData 5 keyword 7d, cached 6j, downsample hourly→daily, synthetic fallback
@@ -117,7 +117,7 @@ git push vercel dev:main
 │   │   ├── +page.svelte              # home: Ticker berita + chip kategori + filter sumber
 │   │   ├── +page.server.ts           # home: Promise.allSettled 11 media, ?kategori
 │   │   ├── cuaca/                    # /cuaca — suhu+polusi+forecast 7d+hourly (C1) + /cuaca/cari search kota (C2)
-│   │   ├── market/                   # /market — tabel saham/crypto — HIDDEN dari nav, route tetap ada (TUNDA)
+│   │   ├── market/                   # /market — market legacy — HIDDEN dari nav sampai migrasi TradingView
 │   │   ├── tentang/                  # /tentang — static 5 card
 │   │   ├── baca/                     # /baca?source=&u=&id= — detail + multi-pool lookup
 │   │   ├── media/[source]/           # /media/:source — list 50 + load-more
@@ -135,7 +135,7 @@ git push vercel dev:main
 ```
 Browser → Vercel CDN (s-maxage=600) → SvelteKit Server (Promise.allSettled)
                                               ├─ sources/* → cache.ts (TTL 10m) → RSS / berita-indo-api
-                                              ├─ market.ts → cached('market:ticker') → CoinGecko + Yahoo Finance (TUNDA, hidden, no dummy)
+                                              ├─ market.ts → legacy cached('market:ticker') (hidden; jangan dikembangkan) → target TradingView client-only
                                               ├─ weather.ts → cached('weather:*') → Open-Meteo Weather + Air Quality + Geocoding (AKTIF C1/C2)
                                               ├─ harga.ts → cached('harga:harian',6j) → CoinGecko PAXG+KAG (logam est) + BBM&LPG statis
                                               ├─ trends.ts → cached('trends:sembako:v1',6j) → Google Trends api/explore→widgetdata, downsample, synthetic fallback
@@ -199,7 +199,7 @@ interface KalenderData { gregorianLabel, hijriLabel, holiday, hariBulan: {date,n
 | Berita RSS | `news.detik.com/rss`, `cnnindonesia.com/rss`, `jpnn.com/rss`, `mediaindonesia.com/feed`, `inews.id/feed` | — | `fast-xml-parser`, enclosure/image |
 | Berita aggregator | `berita-indo-api.vercel.app/v1/{antara,cnbc,tempo,...}` | — | fallback RSS bila 500 |
 | Crypto | `api.coingecko.com/api/v3/coins/markets?ids=bitcoin,ethereum,solana,binancecoin,tether` | tanpa key | 10-50 req/menit, sparkline+trending, cache split 2m |
-| Saham/Forex | `query1.finance.yahoo.com/v8/finance/chart/^JKSE,IDR=X` (+ `query2` fallback, `exchangerate.host` untuk USD/IDR) | tanpa key | **TUNDA** — Yahoo 403, no dummy, stale cache 24j → empty jujur, LQ45 derived `IHSG*0.135` label `est` |
+| Market | TradingView Widgets client-side | tanpa key | **NEXT** — read-only; implementasi custom Yahoo/TwelveData/IDX dihentikan |
 | Cuaca current+forecast | `api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min,weather_code,precipitation_sum&hourly=temperature_2m,weather_code&timezone=Asia/Jakarta&forecast_days=7` | tanpa | Unlimited, TTL 10m |
 | Polusi AQI | `air-quality-api.open-meteo.com/v1/air-quality?latitude={lat}&longitude={lon}&current=us_aqi,pm2_5,pm10,ozone,nitrogen_dioxide&timezone=Asia/Jakarta` | tanpa | Unlimited, TTL 10m |
 | Geocoding kota | `geocoding-api.open-meteo.com/v1/search?name={q}&count=5&language=id` + reverse | tanpa | Unlimited, TTL 1j (search) / 1d (reverse) |
@@ -257,7 +257,7 @@ interface KalenderData { gregorianLabel, hijriLabel, holiday, hariBulan: {date,n
 1. **Fitur Harian** — ✅ SELESAI 5/5 via tab `/harian` (2026-09-01 extended): Briefing ✅ + Gempa ✅ + Harga pivot Logam+Tren+BBM ✅ + Kalender + Hari Penting per bulan ✅ + Bola 7 liga ✅. Lanjut optional: PWA notif. Lihat `docs/PLAN_FITUR_HARIAN.md` §13 + `docs/PLAN_HARGA_TRENDS.md`.
 2. **Hiburan Film TMDB** — ✅ MVP SELESAI. `/hiburan` + detail `/hiburan/movie/[id]` aktif. Lanjut optional: polish UI, pagination, trailer UX, widget `/harian`.
 3. **Fitur Wanita** — ⏸ DITUNDA. Resep Harian dan Kalender Haid belum dikembangkan.
-4. **Market TradingView** — widget/embed read-only saja. Baca `docs/PLAN_MARKET_TRADINGVIEW.md`. Jangan kembali ke Yahoo/TwelveData/custom market fetch.
+4. **Market TradingView** — belum dikerjakan; implement widget/embed read-only saja. Baca `docs/PLAN_MARKET_TRADINGVIEW.md`. Jangan kembali ke Yahoo/TwelveData/custom market fetch.
 
 Market custom lama tetap route legacy sampai migrasi TradingView selesai. No dummy.
 Monetisasi QRIS Footer masih placeholder.
@@ -267,7 +267,7 @@ Monetisasi QRIS Footer masih placeholder.
 1. Baca `AGENTS.md` (ini) → `ARCHITECTURE.md` → `docs/CHANGELOG.md` → semua `docs/PLAN*.md` → `docs/DOC*.md` relevan scope → README folder target. Jangan asumsi plan belum ada; cek seluruh `docs/`.
 2. `git status` + `git branch` (pastikan di `dev`).
 3. `npm run check` sebelum ubah apa pun.
-4. Tanya user mau fitur apa — jangan asumsi. Jika butuh API baru, cek gratis dulu (Open-Meteo untuk cuaca, CoinGecko/Yahoo untuk market — no paid key).
+4. Tanya user mau fitur apa — jangan asumsi. Jika butuh API baru, cek gratis dulu; market wajib ikuti TradingView plan, no custom Yahoo/TwelveData.
 5. Setelah ubah: `npm run check` + `npm run build` → ringkas file yang diubah.
 
 ## 11. Protokol Baca Markdown
@@ -284,9 +284,9 @@ Perintah cek: `find docs -maxdepth 1 -type f -name '*.md' -print`.
 
 ## 12. Pitfalls
 
-- Yahoo 403 → **no dummy** — coba `query2` → `exchangerate.host` → stale cache 24j → empty jujur + `Muat ulang`, jangan hardcode `IHSG 7234`.
-- CoinGecko 429 → cache split 2m + CDN `s-maxage=600`, jangan polling client.
-- LQ45 Yahoo tidak reliable → derived `IHSG*0.135` label `est`, jangan fetch symbol aneh.
+- Market legacy → **no dummy**; jangan tambah Yahoo/TwelveData. Migrasi berikutnya TradingView client-only dengan fallback empty jujur.
+- CoinGecko 429 pada legacy market/harga → cache sesuai fitur, jangan polling client.
+- TradingView widget gagal/lambat → fallback empty jujur + tombol muat ulang; jangan hardcode angka market.
 - Open-Meteo 5xx → `Promise.allSettled` — suhu gagal → polusi tetap tampil, card `Tidak tersedia`, fallback Jakarta.
 - Geocoding 0 hasil → `Tidak ada kota → saran Jakarta/Surabaya/Medan`.
 - pangan.go.id hapus 2026-09-01 → jangan kembalikan, 95% null + timeout 7s → ganti tren 0-100.
